@@ -1,0 +1,19 @@
+{
+  "name": "ampliffy_first",
+  "version": "1.0.0",
+  "description": "Prueba de ampliffy número 1",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/silvadeivi/ampliffy1.git"
+  },
+  "author": "Deivi Silva",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/silvadeivi/ampliffy1/issues"
+  },
+  "homepage": "https://github.com/silvadeivi/ampliffy1#readme"
+}
