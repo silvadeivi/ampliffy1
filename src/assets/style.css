@@ -1,0 +1,44 @@
+html,
+body,
+* {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+.wrapper {
+    padding: 30px;
+}
+
+.wrapper #app {
+    margin: 0 auto;
+    max-width: 1024;
+    width: 100%;
+    padding: 0;
+}
+
+div.element {
+    padding: 15px 25px;
+    background-color: rgba(0, 0, 0, 0.02);
+    display: inline-block;
+    border-radius: 10px;
+}
+
+
+/*--------DEBUGGER--------*/
+
+div#debugger {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+div#debugger>div {
+    margin-bottom: 10px;
+}
+
+div#debugger>div:last-child {
+    margin-bottom: 0;
+}
