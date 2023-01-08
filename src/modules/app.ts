@@ -1,8 +1,8 @@
-import { domObject } from "./domObject"
-import { Debugger } from "./Debugger"
-const app = document.getElementById('app') as HTMLDivElement
+import { domObject } from "./domObject";
+import { Debugger } from "./Debugger";
 
+const app = document.getElementById('app');
 const debug = new Debugger();
+let domObjects:domObject[] = [];
 
-let domObjects:domObject[] = []
-export { app, domObjects, debug }
+export { app, debug, domObjects };

@@ -12,14 +12,10 @@ export class Debugger {
 	update(){
 		this.container.innerHTML = '';
 		domObjects.map((current, index) => {
-			let object = document.createElement('div')
+			let object = document.createElement('div');
 			object.classList.add('debug-element');
-			object.innerHTML = current.name.toUpperCase() + '</br>Width: ' + current.width  + '</br>Height: ' + current.height;
+			object.innerHTML = current.name.toUpperCase() + '</br>Width: ' + current.width  + '</br>Height: ' + current.height + '</br>Visible: ' + current.visibility;
 			this.container.appendChild(object);
-		})
+		});
 	}
-
-	test(){
-		return this.container
-	}
-}
+};
