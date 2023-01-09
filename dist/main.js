@@ -12,17 +12,20 @@ var app_1 = __webpack_require__(755);
 var Debugger = /** @class */ (function () {
     function Debugger() {
         this.container = document.createElement('div');
+        this.container.innerHTML = '<h4>Debugger</h4>';
         this.container.id = 'debugger';
+        this.wrapper = document.createElement('div');
+        this.container.append(this.wrapper);
         app_1.app === null || app_1.app === void 0 ? void 0 : app_1.app.appendChild(this.container);
     }
     Debugger.prototype.update = function () {
         var _this = this;
-        this.container.innerHTML = '';
+        this.wrapper.innerHTML = '';
         app_1.domObjects.map(function (current, index) {
             var object = document.createElement('div');
             object.classList.add('debug-element');
             object.innerHTML = current.name + '</br>Width: ' + current.width + '</br>Height: ' + current.height + '</br>Visible: ' + current.visibility;
-            _this.container.appendChild(object);
+            _this.wrapper.appendChild(object);
         });
     };
     return Debugger;
@@ -213,6 +216,8 @@ var History = /** @class */ (function () {
     function History() {
         this.items = [];
         this.divHistory = document.createElement('div');
+        this.divHistory.innerHTML = '<h4>History</h4>';
+        this.divHistoryWrapper = document.createElement('div');
         this.divHistory.id = 'history';
         app_1.app.append(this.divHistory);
     }
@@ -222,13 +227,13 @@ var History = /** @class */ (function () {
     };
     History.prototype.render = function () {
         var _this = this;
-        var domItemElements = '';
         this.items.map(function (item) {
             var domItemElement = document.createElement('div');
             domItemElement.classList.add('history-item');
-            domItemElement.innerHTML = "\n                <span><strong>Element:</strong> ".concat(item.element.name, "</br></span>\n                <span><strong>Fecha:</strong> ").concat(item.date, "</br></span>\n                <span><strong>Observer:</strong> ").concat(item.observer, "</br></span>\n            ");
-            _this.divHistory.append(domItemElement);
-            _this.divHistory.scrollTop = _this.divHistory.scrollHeight;
+            domItemElement.innerHTML = "\n                <span>\n                    <strong>Element:</strong> ".concat(item.element.name, "</br>\n                    <strong>Fecha:</strong> ").concat(item.date, "</br>\n                    <strong>Observer:</strong> ").concat(item.observer, "</br>\n                </span>\n            ");
+            _this.divHistory.append(_this.divHistoryWrapper);
+            _this.divHistoryWrapper.append(domItemElement);
+            _this.divHistoryWrapper.scrollTop = _this.divHistoryWrapper.scrollHeight;
         });
     };
     return History;
