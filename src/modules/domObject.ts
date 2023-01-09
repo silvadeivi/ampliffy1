@@ -1,6 +1,7 @@
-import { app, domObjects, debug } from "./app";
+import { mainContent, domObjects, debug } from "./app";
 import { resizeObserver } from "./resizeObserver";
 import { intersectionObserver } from "./visibleObserver";
+
 class domObject {
     id:string;
     name:string;
@@ -10,11 +11,17 @@ class domObject {
     visibility:boolean;
     htmlElement:HTMLDivElement;
 
-    constructor(){
+    constructor(
+        id:string = '',
+        name:string = '',
+        htmlElement:HTMLDivElement = document.createElement('div'),
+        content:string = '',
+    ){
 		let index = domObjects.length;
-		this.id = 'element-'+index.toString();
-		this.name = 'Elemento '+index.toString();
-        this.htmlElement = document.createElement('div');
+		this.id = id != null ? 'element-'+index.toString() : id;
+		this.name = name != null ? 'Elemento '+index.toString() : name;
+        this.htmlElement = htmlElement != null ? document.createElement('div') : htmlElement;
+        this.content = content != null ? '' : content;
 
         //dataBind(this.htmlElement, this);
 
@@ -34,11 +41,9 @@ class domObject {
 
         this.htmlElement.innerHTML = `${this.content}`;
 
-        app?.appendChild(this.htmlElement);
+        mainContent?.appendChild(this.htmlElement);
 
         intersectionObserver.observe(this.htmlElement);
-        console.log(`++++++++${this.name}++++++++`);
-        console.log(this);
     }
 
     update(content:string){

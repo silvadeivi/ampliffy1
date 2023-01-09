@@ -21,7 +21,7 @@ var Debugger = /** @class */ (function () {
         app_1.domObjects.map(function (current, index) {
             var object = document.createElement('div');
             object.classList.add('debug-element');
-            object.innerHTML = current.name.toUpperCase() + '</br>Width: ' + current.width + '</br>Height: ' + current.height + '</br>Visible: ' + current.visibility;
+            object.innerHTML = current.name + '</br>Width: ' + current.width + '</br>Height: ' + current.height + '</br>Visible: ' + current.visibility;
             _this.container.appendChild(object);
         });
     };
@@ -71,11 +71,15 @@ exports.Input = Input;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.domObjects = exports.debug = exports.app = void 0;
+exports.mainContent = exports.domObjects = exports.debug = exports.app = void 0;
 var Debugger_1 = __webpack_require__(711);
 var app = document.getElementById('app');
 exports.app = app;
-var debug = new Debugger_1.Debugger();
+var mainContent = document.createElement('div');
+exports.mainContent = mainContent;
+mainContent.id = "main";
+app.append(mainContent);
+var debug = new Debugger_1.Debugger;
 exports.debug = debug;
 var domObjects = [];
 exports.domObjects = domObjects;
@@ -135,11 +139,16 @@ var app_1 = __webpack_require__(755);
 var resizeObserver_1 = __webpack_require__(796);
 var visibleObserver_1 = __webpack_require__(442);
 var domObject = /** @class */ (function () {
-    function domObject() {
+    function domObject(id, name, htmlElement, content) {
+        if (id === void 0) { id = ''; }
+        if (name === void 0) { name = ''; }
+        if (htmlElement === void 0) { htmlElement = document.createElement('div'); }
+        if (content === void 0) { content = ''; }
         var index = app_1.domObjects.length;
-        this.id = 'element-' + index.toString();
-        this.name = 'Elemento ' + index.toString();
-        this.htmlElement = document.createElement('div');
+        this.id = id != null ? 'element-' + index.toString() : id;
+        this.name = name != null ? 'Elemento ' + index.toString() : name;
+        this.htmlElement = htmlElement != null ? document.createElement('div') : htmlElement;
+        this.content = content != null ? '' : content;
         //dataBind(this.htmlElement, this);
         resizeObserver_1.resizeObserver.observe(this.htmlElement);
         app_1.debug.update();
@@ -154,10 +163,8 @@ var domObject = /** @class */ (function () {
         this.height = this.htmlElement.offsetHeight;
         this.content = content;
         this.htmlElement.innerHTML = "".concat(this.content);
-        app_1.app === null || app_1.app === void 0 ? void 0 : app_1.app.appendChild(this.htmlElement);
+        app_1.mainContent === null || app_1.mainContent === void 0 ? void 0 : app_1.mainContent.appendChild(this.htmlElement);
         visibleObserver_1.intersectionObserver.observe(this.htmlElement);
-        console.log("++++++++".concat(this.name, "++++++++"));
-        console.log(this);
     };
     domObject.prototype.update = function (content) {
         this.content = content;
@@ -170,6 +177,42 @@ exports.domObject = domObject;
 
 /***/ }),
 
+/***/ 833:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.historical = void 0;
+var app_1 = __webpack_require__(755);
+var History = /** @class */ (function () {
+    function History() {
+        this.items = [];
+        this.divHistory = document.createElement('div');
+        this.divHistory.id = 'history';
+        app_1.app.append(this.divHistory);
+    }
+    History.prototype.updateItem = function (historyItem) {
+        this.items.push(historyItem);
+        this.render();
+    };
+    History.prototype.render = function () {
+        var _this = this;
+        var domItemElements = '';
+        this.items.map(function (item) {
+            var domItemElement = document.createElement('div');
+            domItemElement.classList.add('history-item');
+            domItemElement.innerHTML = "\n                <span><strong>Element:</strong> ".concat(item.element.name, "</br></span>\n                <span><strong>Fecha:</strong> ").concat(item.date, "</br></span>\n                <span><strong>Observer:</strong> ").concat(item.observer, "</br></span>\n            ");
+            _this.divHistory.append(domItemElement);
+            _this.divHistory.scrollTop = _this.divHistory.scrollHeight;
+        });
+    };
+    return History;
+}());
+exports.historical = new History;
+
+
+/***/ }),
+
 /***/ 796:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -177,10 +220,20 @@ exports.domObject = domObject;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.resizeObserver = void 0;
 var app_1 = __webpack_require__(755);
+var history_1 = __webpack_require__(833);
 var resizeObserver = new ResizeObserver(function (entries) {
     entries.map(function (current, index) {
-        app_1.domObjects[index].width = current.contentRect.width;
-        app_1.domObjects[index].height = current.contentRect.height;
+        app_1.domObjects.filter(function (obj) {
+            if (current.target === obj.htmlElement) {
+                obj.width = current.contentRect.width;
+                obj.height = current.contentRect.height;
+                history_1.historical.updateItem({
+                    element: obj,
+                    date: new Date(),
+                    observer: "Resize: ".concat(obj.width, " ").concat(obj.height)
+                });
+            }
+        });
     });
     app_1.debug.update();
 });
@@ -196,17 +249,22 @@ exports.resizeObserver = resizeObserver;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.intersectionObserver = void 0;
 var app_1 = __webpack_require__(755);
-var domObject_1 = __webpack_require__(964);
+var history_1 = __webpack_require__(833);
 var intersectionObserver = new IntersectionObserver(function (entries) {
     //if (entries[0].intersectionRatio <= 0) return;
-    console.log('INTERSECT RATIO ENTRIES');
-    console.log(entries);
     entries.map(function (current, index) {
         app_1.domObjects.filter(function (obj) {
-            obj.visibility = (current.target === obj.htmlElement);
+            //obj.visibility = (current.target === obj.htmlElement);
+            console.log(current);
+            if (current.target === obj.htmlElement) {
+                obj.visibility = current.isIntersecting;
+                history_1.historical.updateItem({
+                    element: obj,
+                    date: new Date(),
+                    observer: 'Visible ' + obj.visibility
+                });
+            }
         });
-        console.log('++++++DOM OBJECT INSTANCE+++++++');
-        console.log(domObject_1.domObject);
     });
     app_1.debug.update();
 });
@@ -249,16 +307,13 @@ var exports = __webpack_exports__;
 var __webpack_unused_export__;
 
 __webpack_unused_export__ = ({ value: true });
-var app_1 = __webpack_require__(755);
 var domObject_1 = __webpack_require__(964);
 var configMenu_1 = __webpack_require__(886);
 var docelement1 = new domObject_1.domObject;
 var docelement2 = new domObject_1.domObject;
-docelement1.render('Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eget diam at quam tincidunt bibendum. Nulla nec tellus ac dui imperdiet euismod eu sit amet felis.');
+docelement1.render('Texto del elemento 1.');
 docelement2.render('Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eget diam at quam tincidunt bibendum. Nulla nec tellus ac dui imperdiet euismod eu sit amet felis.');
 var menu = new configMenu_1.Menu();
-console.log('Objects Array');
-console.log(app_1.domObjects);
 
 })();
 

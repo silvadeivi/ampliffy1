@@ -4,7 +4,7 @@
     "description": "Prueba de ampliffy número 1",
     "main": "index.js",
     "scripts": {
-        "start": "http-server ./dist/",
+        "serve": "http-server ./dist/",
         "build": "npx webpack",
         "start-dev": "npx webpack --watch"
     },
